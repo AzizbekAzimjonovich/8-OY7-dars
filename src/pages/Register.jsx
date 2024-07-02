@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Form, useActionData } from "react-router-dom";
 import { FormInput } from "../components";
 import { useRegister } from "../hooks/useRegister";
+import { Link } from "react-router-dom";
 
 export const action = async ({ request }) => {
   let formData = await request.formData();
@@ -55,9 +56,13 @@ function Register() {
             </div>
           </Form>
           <div className="w-full mt-5">
-            <button className="btn btn-accent btn-block text-red-500 text-lg">
-              GOOGLE
-            </button>
+            <button className="btn btn-secondary btn-block ">GOOGLE</button>
+          </div>
+          <div className="flex mx-auto mt-5 gap-3">
+            <p>Do you not have an account ?</p>
+            <Link to={"/login"} className="link link-primary">
+              login
+            </Link>
           </div>
         </div>
       </div>

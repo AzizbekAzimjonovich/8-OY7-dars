@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "../firebase/firebaseConfig"; // To'g'ri joydan import qiling
+import { auth } from "../firebase/firebaseConfig";
 import { useState } from "react";
 import { login } from "../app/userSlice";
 import { useDispatch } from "react-redux";
@@ -24,10 +24,17 @@ export const useRegister = () => {
         photoURL,
       });
 
-      const user = userCredential.user;
+      const { user } = userCredential;
       setIsPending(false);
-      dispatch(login(user));
-      toast.success(`Welcome ${user.displayName}`);
+      dispatch(
+        login({
+          uid: user.uid,
+          email: user.email,
+          displayName,
+          photoURL,
+        })
+      );
+      toast.success(`Welcome ${displayName}`);
     } catch (error) {
       setIsPending(false);
       toast.error(error.message);
