@@ -5,20 +5,28 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
+import { login, isAuthChange } from "./app/userSlice";
+
 import { Home, Login, Register } from "./pages";
 
 //layouts
 import MainLayout from "./layouts/MainLayout";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 
 //actions
 import { action as LoginAction } from "./pages/Login";
 import { action as RegisterAction } from "./pages/Register";
+import { action as homeAction } from "./pages/Home";
+import { useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+
+import { auth } from "./firebase/firebaseConfig";
 
 function App() {
-  const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const { user, isAuthState } = useSelector((state) => state.user);
   const routes = createBrowserRouter([
     {
       path: "/",
@@ -31,6 +39,7 @@ function App() {
         {
           index: true,
           element: <Home />,
+          action: homeAction,
         },
       ],
     },
@@ -45,7 +54,14 @@ function App() {
       action: RegisterAction,
     },
   ]);
-  return <RouterProvider router={routes} />;
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      dispatch(login(user));
+      dispatch(isAuthChange());
+    });
+  }, []);
+  return <>{isAuthState && <RouterProvider router={routes} />}</>;
 }
 
 export default App;
